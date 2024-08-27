@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft MOTD Generator</title>
+    <style>
+    body {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 700px;
+        margin: auto;
+        padding: 20px;
+        background-color: #2c2c2c;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+        color: #87ceeb;
+        text-align: center;
+    }
+
+    textarea {
+        width: calc(100% - 30px); /* Subtracting padding */
+        height: 120px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #333;
+        color: #e0e0e0;
+        border: 1px solid #444;
+        border-radius: 6px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 16px;
+        resize: vertical;
+    }
+
+    .options {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        background-color: #444;
+        color: #e0e0e0;
+        border: 1px solid #555;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+
+    #motd-output {
+        font-family: 'Minecraft', 'Courier New', Courier, monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #333;
+        border: 1px solid #444;
+        border-radius: 6px;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .footer a {
+        color: #87ceeb;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Minecraft color classes */
+    .mc-black { color: #000000; }
+    .mc-dark-blue { color: #0000AA; }
+    .mc-dark-green { color: #00AA00; }
+    .mc-dark-aqua { color: #00AAAA; }
+    .mc-dark-red { color: #AA0000; }
+    .mc-dark-purple { color: #AA00AA; }
+    .mc-gold { color: #FFAA00; }
+    .mc-gray { color: #AAAAAA; }
+    .mc-dark-gray { color: #555555; }
+    .mc-blue { color: #5555FF; }
+    .mc-green { color: #55FF55; }
+    .mc-aqua { color: #55FFFF; }
+    .mc-red { color: #FF5555; }
+    .mc-light-purple { color: #FF55FF; }
+    .mc-yellow { color: #FFFF55; }
+    .mc-white { color: #FFFFFF; }
+
+    /* Minecraft format classes */
+    .mc-bold { font-weight: bold; }
+    .mc-strikethrough { text-decoration: line-through; }
+    .mc-underline { text-decoration: underline; }
+    .mc-italic { font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Minecraft MOTD Generator</h1>
+        <textarea id="motd-input" placeholder="Enter your MOTD here"></textarea>
+
+        <div class="options">
+            <label for="color-select">Choose a color:</label>
+            <select id="color-select">
+                <option value="§f" selected>White</option>
+                <option value="§0">Black</option>
+                <option value="§1">Dark Blue</option>
+                <option value="§2">Dark Green</option>
+                <option value="§3">Dark Aqua</option>
+                <option value="§4">Dark Red</option>
+                <option value="§5">Dark Purple</option>
+                <option value="§6">Gold</option>
+                <option value="§7">Gray</option>
+                <option value="§8">Dark Gray</option>
+                <option value="§9">Blue</option>
+                <option value="§a">Green</option>
+                <option value="§b">Aqua</option>
+                <option value="§c">Red</option>
+                <option value="§d">Light Purple</option>
+                <option value="§e">Yellow</option>
+            </select>
+
+            <label for="format-select">Choose a format:</label>
+            <select id="format-select">
+                <option value="§r" selected>None</option>
+                <option value="§l">Bold</option>
+                <option value="§m">Strikethrough</option>
+                <option value="§n">Underline</option>
+                <option value="§o">Italic</option>
+            </select>
+        </div>
+
+        <div id="motd-output">Generated MOTD will appear here</div>
+
+        <div class="footer">
+            <a href="https://esb.is-a.dev" target="_blank">Made by EducatedSuddenBucket</a>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById("motd-input").addEventListener("input", updateMOTD);
+    document.getElementById("color-select").addEventListener("change", applyColor);
+    document.getElementById("format-select").addEventListener("change", applyFormat);
+
+    // Populate the MOTD input field if "motd" parameter exists in the URL
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const motd = urlParams.get('motd');
+        if (motd) {
+            document.getElementById("motd-input").value = motd;
+            updateMOTD();
+        }
+    }
+
+    function applyColor() {
+        const color = document.getElementById("color-select").value;
+        const inputField = document.getElementById("motd-input");
+        inputField.value += color;
+        updateMOTD();
+    }
+
+    function applyFormat() {
+        const format = document.getElementById("format-select").value;
+        const inputField = document.getElementById("motd-input");
+        inputField.value += format;
+        updateMOTD();
+    }
+
+    function updateMOTD() {
+        const input = document.getElementById("motd-input").value;
+        const outputField = document.getElementById("motd-output");
+        outputField.innerHTML = parseMOTD(input);
+    }
+
+    function parseMOTD(input) {
+        const colorMap = {
+            '§0': 'mc-black',
+            '§1': 'mc-dark-blue',
+            '§2': 'mc-dark-green',
+            '§3': 'mc-dark-aqua',
+            '§4': 'mc-dark-red',
+            '§5': 'mc-dark-purple',
+            '§6': 'mc-gold',
+            '§7': 'mc-gray',
+            '§8': 'mc-dark-gray',
+            '§9': 'mc-blue',
+            '§a': 'mc-green',
+            '§b': 'mc-aqua',
+            '§c': 'mc-red',
+            '§d': 'mc-light-purple',
+            '§e': 'mc-yellow',
+            '§f': 'mc-white'
+        };
+
+        const formatMap = {
+            '§l': 'mc-bold',
+            '§m': 'mc-strikethrough',
+            '§n': 'mc-underline',
+            '§o': 'mc-italic'
+        };
+
+        let result = '';
+        let currentSpan = '';
+        let currentClasses = [];
+
+        for (let i = 0; i < input.length; i++) {
+            if (input[i] === '§' && i + 1 < input.length) {
+                if (currentSpan) {
+                    result += `<span class="${currentClasses.join(' ')}">${currentSpan}</span>`;
+                    currentSpan = '';
+                }
+
+                const code = input.substr(i, 2);
+                if (colorMap[code]) {
+                    currentClasses = [colorMap[code]];
+                } else if (formatMap[code]) {
+                    currentClasses.push(formatMap[code]);
+                } else if (code === '§r') {
+                    currentClasses = [];
+                }
+                i++;
+            } else {
+                currentSpan += input[i];
+            }
+        }
+
+        if (currentSpan) {
+            result += `<span class="${currentClasses.join(' ')}">${currentSpan}</span>`;
+        }
+
+                return result || 'Generated MOTD will appear here';
+            }
+            </script>
+        </body>
+        </html>
+
