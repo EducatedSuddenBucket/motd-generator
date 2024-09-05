@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft MOTD Generator</title>
+    <title>MOTD Craft: Minecraft Server Message Designer</title>
     <style>
     body {
         background-color: #1e1e1e;
@@ -22,14 +22,23 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    h1 {
-        color: #87ceeb;
+    .title-container {
         text-align: center;
+        margin-bottom: 20px;
     }
 
-    textarea {
-        width: calc(100% - 30px); /* Subtracting padding */
-        height: 120px;
+    h1 {
+        color: #87ceeb;
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        color: #aaaaaa;
+        font-size: 1.2em;
+    }
+
+    textarea, input[type="text"] {
+        width: calc(100% - 30px);
         margin-bottom: 20px;
         padding: 15px;
         background-color: #333;
@@ -38,6 +47,10 @@
         border-radius: 6px;
         font-family: 'Courier New', Courier, monospace;
         font-size: 16px;
+    }
+
+    textarea {
+        height: 120px;
         resize: vertical;
     }
 
@@ -51,7 +64,7 @@
         font-weight: bold;
     }
 
-    select {
+    select, button {
         width: 100%;
         padding: 12px;
         margin-bottom: 15px;
@@ -60,6 +73,17 @@
         border: 1px solid #555;
         border-radius: 6px;
         font-size: 16px;
+        cursor: pointer;
+    }
+
+    button {
+        background-color: #4CAF50;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #45a049;
     }
 
     #motd-output {
@@ -115,8 +139,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Minecraft MOTD Generator</h1>
-        <textarea id="motd-input" placeholder="Enter your MOTD here"></textarea>
+        <div class="title-container">
+            <h1>MOTD Craft</h1>
+            <div class="subtitle">Minecraft Server Message Designer</div>
+        </div>
+        <textarea id="motd-input" placeholder="Enter your server's MOTD here"></textarea>
 
         <div class="options">
             <label for="color-select">Choose a color:</label>
@@ -149,7 +176,13 @@
             </select>
         </div>
 
-        <div id="motd-output">Generated MOTD will appear here</div>
+        <div id="motd-output">Your server's MOTD will appear here</div>
+
+        <div class="options">
+            <label for="permanent-link">Permanent Link:</label>
+            <input type="text" id="permanent-link" readonly>
+            <button id="copy-link">Copy Link</button>
+        </div>
 
         <div class="footer">
             <a href="https://esb.is-a.dev" target="_blank">Made by EducatedSuddenBucket</a>
@@ -160,6 +193,7 @@
     document.getElementById("motd-input").addEventListener("input", updateMOTD);
     document.getElementById("color-select").addEventListener("change", applyColor);
     document.getElementById("format-select").addEventListener("change", applyFormat);
+    document.getElementById("copy-link").addEventListener("click", copyLink);
 
     // Populate the MOTD input field if "motd" parameter exists in the URL
     window.onload = function() {
@@ -189,6 +223,7 @@
         const input = document.getElementById("motd-input").value;
         const outputField = document.getElementById("motd-output");
         outputField.innerHTML = parseMOTD(input);
+        updatePermanentLink();
     }
 
     function parseMOTD(input) {
@@ -247,9 +282,22 @@
             result += `<span class="${currentClasses.join(' ')}">${currentSpan}</span>`;
         }
 
-                return result || 'Generated MOTD will appear here';
-            }
-            </script>
-        </body>
-        </html>
+        return result || 'Your server\'s MOTD will appear here';
+    }
 
+    function updatePermanentLink() {
+        const motd = encodeURIComponent(document.getElementById("motd-input").value);
+        const url = new URL(window.location.href);
+        url.searchParams.set('motd', motd);
+        document.getElementById("permanent-link").value = url.href;
+    }
+
+    function copyLink() {
+        const linkInput = document.getElementById("permanent-link");
+        linkInput.select();
+        document.execCommand("copy");
+        alert("Permanent link copied to clipboard!");
+    }
+    </script>
+</body>
+</html>
