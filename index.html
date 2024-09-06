@@ -286,7 +286,7 @@
     }
 
     function updatePermanentLink() {
-        const motd = encodeURIComponent(document.getElementById("motd-input").value);
+        const motd = document.getElementById("motd-input").value;
         const url = new URL(window.location.href);
         url.searchParams.set('motd', motd);
         document.getElementById("permanent-link").value = url.href;
